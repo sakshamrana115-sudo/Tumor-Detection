@@ -149,29 +149,3 @@ with right_col:
     st.line_chart(chart_data, x='Epoch', y='Accuracy', color="#00f2ff")
     
     st.markdown("<p style='text-align:center; font-size:12px; color:#555;'>Neural training history validated at 98.5% precision.</p>", unsafe_allow_html=True)
-
-# Define the custom cyan color from your UI
-accent_color = "#00FFFF" 
-
-st.markdown(f"""
-    <style>
-    /* Targeting the image container to change the border */
-    .stImage > img {{
-        border: 3px solid {accent_color};
-        border-radius: 10px;
-        box-shadow: 0 0 15px {accent_color}44; /* Optional glow effect */
-    }}
-    
-    /* If you are using a custom div container for the 'Analysis Feed' */
-    .analysis-container {{
-        border: 2px solid {accent_color};
-        padding: 10px;
-        border-radius: 5px;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
-# Example of displaying the image within that styled container
-st.image("image_cdaad4.jpg", caption="ANALYSIS_FEED")
-
-
