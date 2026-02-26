@@ -5,101 +5,90 @@ from PIL import Image
 import gdown
 import os
 
-# --- 1. SET PAGE CONFIG ---
+# --- 1. SET PAGE CONFIG (MUST BE FIRST) ---
 st.set_page_config(
     page_title="NeurAI Diagnostics Console",
     page_icon="🧠",
     layout="wide"
 )
 
-# --- 2. FUTURISTIC CSS INJECTION ---
+# --- 2. FUTURISTIC NEON CSS INJECTION ---
 st.markdown("""
     <style>
-    /* Main background */
+    /* Dark Theme Base */
     .stApp {
         background-color: #0e1117;
         color: #00f2ff;
     }
     
-    /* Sidebar styling */
+    /* Glowing Diagnosis Card */
+    .metric-card {
+        background-color: rgba(0, 242, 255, 0.05);
+        border: 1px solid #00f2ff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+        margin-top: 20px;
+    }
+
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #161b22 !important;
         border-right: 1px solid #00f2ff;
     }
-    
-    /* Glowing card effect for results */
-    .prediction-card {
-        background: rgba(0, 242, 255, 0.05);
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px solid #00f2ff;
-        box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-    }
-    
-    /* Custom Title */
+
+    /* Header Styling */
     .main-title {
         font-family: 'Courier New', monospace;
         color: #00f2ff;
         text-shadow: 0 0 10px #00f2ff;
         font-size: 3rem;
         font-weight: bold;
+        text-align: center;
+    }
+
+    /* Customizing Progress Bar */
+    .stProgress > div > div > div > div {
+        background-color: #00f2ff;
     }
     
-    /* Metric boxes */
-    [data-testid="stMetricValue"] {
-        color: #00f2ff !important;
-    }
-    
-    /* Custom borders for images */
-    img {
-        border-radius: 10px;
-        border: 2px solid #161b22;
-        box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+    /* Clean Tab Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 24px;
+        background-color: transparent;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. MODEL LOADING ---
+# --- 3. AUTOMATED MODEL RETRIEVAL ---
 @st.cache_resource
 def load_model():
+    # Your specific Google Drive File ID
     file_id = '1XGMWaJhTvEqKdHhm307M7_tikdwXB5qU'
-    url = f'https://drive.google.com/uc?id={file_id}&export=download'
+    
+    # URL with &confirm=t forces download bypass for large files
+    url = f'https://drive.google.com/uc?id={file_id}&confirm=t'
     output = 'brain_tumor_model.h5'
+    
     if not os.path.exists(output):
-        gdown.download(url, output, quiet=False, fuzzy=True, use_cookies=False)
+        with st.spinner("🛰️ INITIALIZING NEURAL UPLINK... DOWNLOADING MODEL..."):
+            gdown.download(url, output, quiet=False, fuzzy=True, use_cookies=False)
+            
     return tf.keras.models.load_model(output)
 
-model = load_model()
-labels = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
+# Load AI
+try:
+    model = load_model()
+    labels = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
+except Exception as e:
+    st.error(f"SYSTEM_ERROR: {e}")
+    st.stop()
 
-# --- 4. HEADER ---
-st.markdown('<p class="main-title">🧠 NeurAI Diagnostics Console</p>', unsafe_allow_html=True)
-st.write("Real-time AI-powered medical analysis with 98.5% precision.")
-
-# --- 5. SIDEBAR ---
+# --- 4. SIDEBAR CONSOLE ---
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/2491/2491295.png", width=80)
-    st.subheader("Neural Network Status")
-    st.success("System: ONLINE")
+    st.markdown("### 🖥️ CONTROL PANEL")
+    st.success("STATUS: NEURAL LINK ACTIVE")
     st.markdown("---")
-    uploaded_file = st.file_uploader("Upload MRI Scan (JPG/PNG)", type=["jpg", "png", "jpeg"])
-    st.markdown("---")
-    st.write("Developed by: Saksham Rana | © 2026")
-
-# --- 6. MAIN CONTENT ---
-tab1, tab2 = st.tabs(["Analysis Interface", "Neural Network Metrics"])
-
-with tab1:
-    if uploaded_file:
-        col1, col2 = st.columns([1, 1])
-        image = Image.open(uploaded_file)
-        
-        with col1:
-            st.markdown("### MRI Visual Feed")
-            st.image(image, use_container_width=True)
-            
-        with col2:
-            st.markdown("### AI Diagnostic Result")
-            # Preprocessing
-            img = image.convert('L').resize((150, 150))
-            img_array = np.array(img) / 255.0
+    
+    st.subheader("MRI SCAN INPUT")
+    uploaded_file = st.file_uploader("Upload Image File", type=["jpg
