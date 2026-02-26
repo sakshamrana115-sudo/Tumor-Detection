@@ -43,7 +43,7 @@ st.markdown(f"""
     /* MATCHING IMAGE BORDERS (Replaces white with Cyan) */
     .stImage > img {{
         border: 3px solid {accent_color} !important;
-        border-radius: 15px;
+        border-radius: 10px;
         box-shadow: 0 0 20px {accent_color}33;
     }}
 
@@ -168,4 +168,5 @@ with right_col:
     st.line_chart(chart_data, x='Epoch', y='Accuracy', color=accent_color)
     
     st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA_STREAM_ACTIVE</p>", unsafe_allow_html=True)
+
 
