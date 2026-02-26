@@ -205,3 +205,92 @@ with right_col:
 
 
 
+
+import streamlit as st
+# ... (keep your existing imports: tf, np, pd, Image, etc.)
+
+# --- 1. PAGE CONFIGURATION ---
+st.set_page_config(page_title="NeurAI Diagnostics Console", layout="wide")
+
+accent_color = "#00f2ff"
+
+# --- 2. UPDATED CSS WITH SCANNER ---
+st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    .stApp {{ background-color: #0e1117; color: {accent_color}; font-family: 'Orbitron', sans-serif; }}
+    
+    .main-title {{
+        font-family: 'Orbitron', sans-serif;
+        color: {accent_color};
+        font-size: 75px;
+        text-align: center;
+        text-shadow: 0 0 15px {accent_color};
+        border-bottom: 2px solid {accent_color};
+        margin-bottom: 30px;
+    }}
+
+    /* THE SCANNER CONTAINER */
+    .scan-container {{
+        position: relative;
+        width: 100%;
+        border: 3px solid {accent_color};
+        border-radius: 15px;
+        overflow: hidden; /* Keeps the scan line inside the box */
+    }}
+
+    /* THE ANIMATED SCAN LINE */
+    .scan-line {{
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        background: {accent_color};
+        top: 0;
+        left: 0;
+        z-index: 10;
+        box-shadow: 0 0 15px {accent_color}, 0 0 25px {accent_color};
+        animation: scan 3s linear infinite;
+        opacity: 0.7;
+    }}
+
+    @keyframes scan {{
+        0% {{ top: 0%; }}
+        50% {{ top: 100%; }}
+        100% {{ top: 0%; }}
+    }}
+
+    /* Fix for File Uploader Border */
+    [data-testid="stFileUploader"] {{
+        background-color: #161b22;
+        border: 2px solid {accent_color} !important;
+        border-radius: 15px;
+    }}
+    </style>
+    
+    <div class="main-title">NEURA AI DIAGNOSTICS</div>
+    """, unsafe_allow_html=True)
+
+# --- (Keep your model loading logic here) ---
+
+# --- 3. MAIN DASHBOARD ---
+main_col, right_col = st.columns([0.6, 0.4], gap="large")
+
+with main_col:
+    st.markdown("### 🔍 ANALYSIS_FEED")
+    if uploaded_file:
+        image = Image.open(uploaded_file)
+        
+        # WE WRAP THE IMAGE IN A DIV TO APPLY THE ANIMATION
+        st.markdown(f"""
+            <div class="scan-container">
+                <div class="scan-line"></div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.image(image, use_container_width=True)
+        
+        # ... (keep your model prediction logic here)
+    else:
+        st.info("⚡ AWAITING DATA INPUT...")
+
+# --- (Keep your right_col logic for Specs and Graph here) ---
