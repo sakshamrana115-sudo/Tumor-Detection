@@ -125,7 +125,7 @@ def load_model():
 
 try:
     model = load_model()
-    labels = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
+    labels = ['Glioma', 'Meningioma', 'Pituitary', 'No Tumor']
 except Exception as e:
     st.error(f"SYSTEM_ERROR: {e}")
     st.stop()
@@ -161,7 +161,7 @@ with main_col:
         st.markdown(f"""
             <div class="metric-card">
                 <h1 style='color:{accent_color}; margin:0; letter-spacing:3px;'>TARGET: {result.upper()}</h1>
-                <p style='color:{accent_color}; font-size:20px;'>NEURAL_CONFIDENCE: {conf:.2f}%</p>
+                <p style='color:{accent_color}; font-size:20px;'>NEURAL CONFIDENCE: {conf:.2f}%</p>
             </div>
         """, unsafe_allow_html=True)
     else:
@@ -179,7 +179,7 @@ with right_col:
     st.markdown("---")
 
     # System Specs Section
-    st.markdown("### ⚙️ SYSTEM_SPECS")
+    st.markdown("### ⚙️ SYSTEM SPECS")
     spec_c1, spec_c2 = st.columns(2)
     with spec_c1:
         st.write(f"**ARCH:** <span style='color:{accent_color}'>CNN-v4</span>", unsafe_allow_html=True)
@@ -191,7 +191,7 @@ with right_col:
     st.markdown("---")
 
     # Themed Performance Graph
-    st.markdown("### 📊 NEURAL_ACCURACY_LOG")
+    st.markdown("### 📊 NEURAL ACCURACY LOG")
     chart_data = pd.DataFrame({
         'Epoch': list(range(1, 11)),
         'Accuracy': [0.72, 0.81, 0.89, 0.94, 0.96, 0.97, 0.98, 0.982, 0.984, 0.985]
@@ -200,7 +200,8 @@ with right_col:
     # Streamlit's line chart with the matching cyan color
     st.line_chart(chart_data, x='Epoch', y='Accuracy', color=accent_color)
     
-    st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA_STREAM_ACTIVE</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA STREAM ACTIVE</p>", unsafe_allow_html=True)
+
 
 
 
