@@ -79,6 +79,39 @@ st.markdown(f"""
     <div class="main-title">NEURA AI DIAGNOSTICS</div>
     """, unsafe_allow_html=True)
 
+# --- UPDATED FUTURISTIC NEON CSS ---
+st.markdown(f"""
+    <style>
+    /* 1. Target the actual File Uploader Box */
+    [data-testid="stFileUploader"] {{
+        background-color: #161b22; /* Dark background to remove the "white box" feel */
+        border: 2px solid {accent_color} !important; /* The blue line becomes the border */
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 0 15px {accent_color}33; /* Optional subtle glow */
+    }}
+
+    /* 2. Style the text inside the uploader to match theme */
+    [data-testid="stFileUploader"] section {{
+        color: {accent_color} !important;
+        font-family: 'Orbitron', sans-serif;
+    }}
+
+    /* 3. Style the "Browse files" button inside */
+    [data-testid="stFileUploader"] button {{
+        border: 1px solid {accent_color} !important;
+        background-color: transparent !important;
+        color: {accent_color} !important;
+        border-radius: 8px;
+    }}
+
+    /* Fix for the blue line overflow issue */
+    .stFileUploader section div {{
+        border: none !important; /* Removes the default Streamlit dashed line */
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- 4. MODEL LOADING (Cached) ---
 @st.cache_resource
 def load_model():
@@ -168,5 +201,6 @@ with right_col:
     st.line_chart(chart_data, x='Epoch', y='Accuracy', color=accent_color)
     
     st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA_STREAM_ACTIVE</p>", unsafe_allow_html=True)
+
 
 
