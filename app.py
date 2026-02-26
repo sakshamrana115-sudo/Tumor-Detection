@@ -91,4 +91,5 @@ with st.sidebar:
     st.markdown("---")
     
     st.subheader("MRI SCAN INPUT")
-    uploaded_file = st.file_uploader("Upload Image File", type=["jpg
+    uploaded_file = st.file_uploader("Upload Image File", type=["jpg"]
+
