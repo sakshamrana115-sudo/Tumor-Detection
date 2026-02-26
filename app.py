@@ -99,10 +99,10 @@ except Exception as e:
 
 # --- 5. SIDEBAR CONTROL ---
 with st.sidebar:
-    st.markdown(f"<h3 style='color:{accent_color};'>🖥️ CONTROL_PANEL</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:{accent_color};'>🖥️ CONTROL PANEL</h3>", unsafe_allow_html=True)
     st.success("STATUS: ONLINE")
     st.markdown("---")
-    uploaded_file = st.file_uploader("UPLOAD_MRI_SCAN", type=["jpg", "png", "jpeg"])
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
     st.markdown("---")
     st.info("System Ready for Processing")
 
@@ -168,3 +168,4 @@ with right_col:
     st.line_chart(chart_data, x='Epoch', y='Accuracy', color=accent_color)
     
     st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA_STREAM_ACTIVE</p>", unsafe_allow_html=True)
+
