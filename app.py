@@ -1,91 +1,72 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-import cv2
 from PIL import Image
-
-import streamlit as st
-
-# --- CUSTOM CSS INJECTION ---
-st.markdown("""
-    <style>
-    /* Change the background color */
-    .stApp {
-        background-color: #f0f2f6;
-    }
-    /* Style the header */
-    h1 {
-        color: #1E3A8A; /* Dark Medical Blue */
-        text-align: center;
-        font-family: 'Helvetica', sans-serif;
-    }
-    /* Style the Analyze button */
-    div.stButton > button:first-child {
-        background-color: #1E3A8A;
-        color: white;
-        width: 100%;
-        border-radius: 10px;
-        height: 3em;
-        font-weight: bold;
-    }
-    /* Style the result cards */
-    .stAlert {
-        border-radius: 15px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 import gdown
 import os
 
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="Brain Tumor AI Detector", page_icon="🧠")
+
+# --- MODEL LOADING WITH GOOGLE DRIVE ---
 @st.cache_resource
 def load_model():
-    file_id = 'YOUR_GOOGLE_DRIVE_FILE_ID_HERE'
-    url = f'https://drive.google.com/uc?id={file_id}'
+    # Your specific file ID
+    file_id = '1XGMWaJhTvEqKdHhm307M7_tikdwXB5qU'
+    
+    # NEW URL FORMAT: Adds the 'confirm' flag for large files
+    url = f'https://drive.google.com/uc?id={file_id}&confirm=t'
     output = 'brain_tumor_model.h5'
+    
     if not os.path.exists(output):
-        gdown.download(url, output, quiet=False)
+        with st.spinner("Downloading AI Model... this may take a minute."):
+            # We add use_cookies=False to avoid permission confusion
+            gdown.download(url, output, quiet=False, fuzzy=True)
+            
     return tf.keras.models.load_model(output)
 
-model = load_model()
-# 1. Setup the Web Page
-st.set_page_config(page_title="MRI Tumor Detector", page_icon="🧠")
-st.title("🧠 Brain Tumor Classification Web App")
+# Load the model
+try:
+    model = load_model()
+    # These labels must match the exact order of your training (0, 1, 2, 3)
+    labels = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
+
+# --- USER INTERFACE ---
+st.title("🧠 Brain Tumor Detection AI")
 st.markdown("---")
+st.write("Upload a Brain MRI scan (JPG/PNG) to get an instant AI diagnosis.")
 
-# 2. Load the Trained Model
-@st.cache_resource
-def load_model():
-    # Make sure this filename matches exactly what you saved!
-    return tf.keras.models.load_model("brain_tumor_universal_model.h5")
-
-model = load_model()
-CATEGORIES = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
-
-# 3. Image Upload Section
-uploaded_file = st.file_uploader("Upload an MRI Scan...", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader("Choose an MRI image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     # Display the image
     image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Scan', use_container_width=True)
+    st.image(image, caption='Uploaded MRI Scan', use_column_width=True)
     
-    # 4. Processing for the AI
-    img = np.array(image.convert('L')) # Convert to Grayscale
-    img = cv2.resize(img, (150, 150))
-    img = img.reshape(-1, 150, 150, 1) / 255.0
+    # Preprocessing to match your training (150x150, Grayscale, Normalized)
+    with st.spinner("AI is analyzing the scan..."):
+        img = image.convert('L') # Grayscale
+        img = img.resize((150, 150))
+        img_array = np.array(img) / 255.0
+        img_array = img_array.reshape(1, 150, 150, 1) # Batch size, H, W, Channels
 
-    # 5. Prediction Button
-    if st.button("Predict Diagnosis"):
-        prediction = model.predict(img)
-        res_index = np.argmax(prediction)
-        confidence = prediction[0][res_index] * 100
-        
-        # 6. Show Results
-        st.subheader(f"Prediction: {CATEGORIES[res_index]}")
-        st.write(f"**AI Confidence:** {confidence:.2f}%")
-        
-        if CATEGORIES[res_index] == "No Tumor":
-            st.success("The model did not find evidence of a tumor.")
-        else:
-            st.error(f"Potential {CATEGORIES[res_index]} detected. Consult a professional.")
+        # Make Prediction
+        prediction = model.predict(img_array)
+        result_index = np.argmax(prediction)
+        result_label = labels[result_index]
+        confidence = np.max(prediction) * 100
+
+    # Display Result
+    st.markdown("---")
+    st.subheader(f"Diagnosis: **{result_label}**")
+    st.progress(int(confidence))
+    st.write(f"Confidence Level: **{confidence:.2f}%**")
+    
+    if result_label == "No Tumor":
+        st.balloons()
+        st.success("The AI did not detect a tumor in this scan.")
+    else:
+        st.warning(f"The AI has detected signs of a {result_label}. Please consult a medical professional.")
