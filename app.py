@@ -150,8 +150,6 @@ with right_col:
     
     st.markdown("<p style='text-align:center; font-size:12px; color:#555;'>Neural training history validated at 98.5% precision.</p>", unsafe_allow_html=True)
 
-import streamlit as st
-
 # Define the custom cyan color from your UI
 accent_color = "#00FFFF" 
 
@@ -175,4 +173,5 @@ st.markdown(f"""
 
 # Example of displaying the image within that styled container
 st.image("image_cdaad4.jpg", caption="ANALYSIS_FEED")
+
 
