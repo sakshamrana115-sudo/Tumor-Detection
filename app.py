@@ -13,53 +13,73 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- 2. FUTURISTIC NEON CSS (FIXES WHITE BOX & COLORS) ---
-st.markdown("""
+# --- 2. THEMED CONFIGURATION ---
+accent_color = "#00f2ff"  # Neon Cyan
+bg_color = "#0e1117"
+
+# --- 3. ADVANCED NEURAL CSS ---
+st.markdown(f"""
     <style>
-    .stApp { background-color: #0e1117; color: #00f2ff; }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+    /* Global styling */
+    .stApp {{ background-color: {bg_color}; color: {accent_color}; font-family: 'Orbitron', sans-serif; }}
     
-    /* Themed File Uploader (No more white box) */
-    [data-testid="stFileUploader"] {
+    /* THE BIG TITLE */
+    .main-title {{
+        font-family: 'Orbitron', sans-serif;
+        color: {accent_color};
+        text-shadow: 0 0 15px {accent_color}, 0 0 30px {accent_color}55;
+        font-size: 75px; /* MASSIVE SIZE */
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 10px;
+        margin-top: -40px;
+        padding: 30px 0;
+        border-bottom: 2px solid {accent_color};
+        text-transform: uppercase;
+    }}
+
+    /* MATCHING IMAGE BORDERS (Replaces white with Cyan) */
+    .stImage > img {{
+        border: 3px solid {accent_color} !important;
+        border-radius: 15px;
+        box-shadow: 0 0 20px {accent_color}33;
+    }}
+
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {{
+        background-color: #0a0c10 !important;
+        border-right: 2px solid {accent_color};
+    }}
+
+    /* Themed File Uploader */
+    [data-testid="stFileUploader"] {{
         background-color: #161b22;
-        border: 1px dashed #00f2ff;
+        border: 1px dashed {accent_color};
         border-radius: 10px;
-        padding: 10px;
-    }
-    [data-testid="stFileUploader"] section div div { color: #00f2ff !important; }
+        color: {accent_color} !important;
+    }}
 
     /* Glowing Diagnosis Card */
-    .metric-card {
+    .metric-card {{
         background-color: rgba(0, 242, 255, 0.05);
-        border: 1px solid #00f2ff;
-        padding: 20px;
+        border: 2px solid {accent_color};
+        padding: 25px;
         border-radius: 15px;
-        box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-    }
+        box-shadow: 0 0 25px rgba(0, 242, 255, 0.2);
+        margin-top: 20px;
+    }}
     
-    /* Right Panel Container */
-    .right-panel {
-        background-color: #161b22;
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px solid #00f2ff;
-    }
-
-    section[data-testid="stSidebar"] {
-        background-color: #161b22 !important;
-        border-right: 1px solid #00f2ff;
-    }
-
-    .main-title {
-        font-family: 'Courier New', monospace;
-        color: #00f2ff;
-        text-shadow: 0 0 10px #00f2ff;
-        font-size: 2.5rem;
-        font-weight: bold;
-    }
+    /* Small UI Polish */
+    .stTabs [data-baseweb="tab-list"] {{ gap: 24px; }}
+    .stTabs [data-baseweb="tab"] {{ color: {accent_color}; }}
     </style>
+    
+    <div class="main-title">NEURA AI DIAGNOSTICS</div>
     """, unsafe_allow_html=True)
 
-# --- 3. MODEL LOADING ---
+# --- 4. MODEL LOADING (Cached) ---
 @st.cache_resource
 def load_model():
     file_id = '1XGMWaJhTvEqKdHhm307M7_tikdwXB5qU'
@@ -77,25 +97,23 @@ except Exception as e:
     st.error(f"SYSTEM_ERROR: {e}")
     st.stop()
 
-# --- 4. SIDEBAR CONTROL ---
+# --- 5. SIDEBAR CONTROL ---
 with st.sidebar:
-    st.markdown("### 🖥️ CONTROL PANEL")
+    st.markdown(f"<h3 style='color:{accent_color};'>🖥️ CONTROL_PANEL</h3>", unsafe_allow_html=True)
     st.success("STATUS: ONLINE")
     st.markdown("---")
-    uploaded_file = st.file_uploader("Upload MRI Image", type=["jpg", "png", "jpeg"])
+    uploaded_file = st.file_uploader("UPLOAD_MRI_SCAN", type=["jpg", "png", "jpeg"])
     st.markdown("---")
     st.info("System Ready for Processing")
 
-# --- 5. MAIN DASHBOARD LAYOUT (60/40 Split) ---
-st.markdown('<p class="main-title">🧠 NEURAI DIAGNOSTICS CONSOLE</p>', unsafe_allow_html=True)
-
-# Left Column (Main Analysis) | Right Column (Performance & Team)
+# --- 6. MAIN DASHBOARD LAYOUT ---
 main_col, right_col = st.columns([0.6, 0.4], gap="large")
 
 with main_col:
-    st.markdown("### 🔍 ANALYSIS_FEED")
+    st.markdown(f"### 🔍 ANALYSIS_FEED")
     if uploaded_file:
         image = Image.open(uploaded_file)
+        # The CSS above automatically handles the border color for this image
         st.image(image, use_container_width=True)
         
         with st.spinner("🔬 SCANNING TISSUE..."):
@@ -109,43 +127,44 @@ with main_col:
 
         st.markdown(f"""
             <div class="metric-card">
-                <h2 style='color:#00f2ff; margin:0;'>TARGET: {result.upper()}</h2>
-                <p style='color:#00f2ff; font-family:monospace;'>NEURAL_CONFIDENCE: {conf:.2f}%</p>
+                <h1 style='color:{accent_color}; margin:0; letter-spacing:3px;'>TARGET: {result.upper()}</h1>
+                <p style='color:{accent_color}; font-size:20px;'>NEURAL_CONFIDENCE: {conf:.2f}%</p>
             </div>
         """, unsafe_allow_html=True)
     else:
         st.info("⚡ AWAITING DATA INPUT VIA CONTROL PANEL...")
 
 with right_col:
-    # --- TEAM BRANDING ---
+    # Team Branding Panel
     st.markdown(f"""
-        <div style="text-align: center; border: 2px solid #00f2ff; padding: 15px; border-radius: 10px; background: rgba(0, 242, 255, 0.1);">
-            <h2 style="color: #00f2ff; margin: 0; font-family: 'Courier New';">ASTER PUBLIC SCHOOL</h2>
-            <p style="color: #888; font-size: 14px;">TEAM NEURAL INNOVATORS</p>
+        <div style="text-align: center; border: 2px solid {accent_color}; padding: 15px; border-radius: 10px; background: rgba(0, 242, 255, 0.1);">
+            <h2 style="color: {accent_color}; margin: 0;">ASTER PUBLIC SCHOOL</h2>
+            <p style="color: #888; font-size: 14px; letter-spacing: 2px;">TEAM NEURAL INNOVATORS</p>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("---")
 
-    # --- MODEL SPECIFICATIONS ---
+    # System Specs Section
     st.markdown("### ⚙️ SYSTEM_SPECS")
     spec_c1, spec_c2 = st.columns(2)
     with spec_c1:
-        st.write("**ARCH:** CNN-v4")
-        st.write("**OPT:** Adam")
+        st.write(f"**ARCH:** <span style='color:{accent_color}'>CNN-v4</span>", unsafe_allow_html=True)
+        st.write(f"**OPT:** <span style='color:{accent_color}'>Adam</span>", unsafe_allow_html=True)
     with spec_c2:
-        st.write("**ACC:** 98.52%")
-        st.write("**DIM:** 150x150")
+        st.write(f"**ACC:** <span style='color:{accent_color}'>98.52%</span>", unsafe_allow_html=True)
+        st.write(f"**DIM:** <span style='color:{accent_color}'>150x150</span>", unsafe_allow_html=True)
 
     st.markdown("---")
 
-    # --- PERFORMANCE GRAPH ---
+    # Themed Performance Graph
     st.markdown("### 📊 NEURAL_ACCURACY_LOG")
-    # Generating mock history for the 98.5% training curve
     chart_data = pd.DataFrame({
         'Epoch': list(range(1, 11)),
         'Accuracy': [0.72, 0.81, 0.89, 0.94, 0.96, 0.97, 0.98, 0.982, 0.984, 0.985]
     })
-    st.line_chart(chart_data, x='Epoch', y='Accuracy', color="#00f2ff")
     
-    st.markdown("<p style='text-align:center; font-size:12px; color:#555;'>Neural training history validated at 98.5% precision.</p>", unsafe_allow_html=True)
+    # Streamlit's line chart with the matching cyan color
+    st.line_chart(chart_data, x='Epoch', y='Accuracy', color=accent_color)
+    
+    st.markdown(f"<p style='text-align:center; font-size:12px; color:{accent_color}99;'>DATA_STREAM_ACTIVE</p>", unsafe_allow_html=True)
